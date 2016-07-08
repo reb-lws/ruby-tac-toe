@@ -2,6 +2,7 @@
 class Game
   @@ROW_HASH = {"A" => 0, "B" => 1, "C" => 2}
   attr_reader :player1, :player2
+  attr_accessor :board
 
   def initialize
     @board = create_board
@@ -14,19 +15,31 @@ class Game
     row1 = @board[0]
     row2 = @board[1]
     row3 = @board[2]
-    puts "   A   B    C"
-    puts "1  " + " #{row1[0]} # #{row1[1]} # #{row1[2]}  "
+    puts "   1   2    3"
+    puts "A  " + " #{row1[0]} # #{row1[1]} # #{row1[2]}  "
     puts "   ###########"
-    puts "2  " + " #{row2[0]} # #{row2[1]} # #{row2[2]}  "
+    puts "B  " + " #{row2[0]} # #{row2[1]} # #{row2[2]}  "
     puts "   ###########"
-    puts "3  " + " #{row3[0]} # #{row3[1]} # #{row3[2]}  "
+    puts "C  " + " #{row3[0]} # #{row3[1]} # #{row3[2]}  "
   end
 
   def inspect
-    "TicTacToe"
+    "TicTacToeGame"
   end
 
-  
+  # Update the gameboard according to the specifications provided by play_ary.
+  def make_moves(play_ary)
+    moving_player = play_ary[0]
+    coordinates_string = play_ary[1]
+    coordinates = translate_coordinates(coordinates_string)
+    row = coordinates[0]
+    column = coordinates[1]
+    puts "#{moving_player} takes #{coordinates_string[0] + coordinates_string[1]}."
+    
+    modify_board!(column, row, moving_player)
+  end
+
+
   private
   # Creates the initial gameboard.
   def create_board
@@ -42,33 +55,50 @@ class Game
     board_ary
   end
 
+  def modify_board!(column, row, player)
+    @board[column][row].side = player.side
+    puts @board[column][row]
+  end
+
+  # Translates coordinates into a specific Cell reference.
+  # ROW-LETTER + COLUMN-NUM -> [row_index, col_index]; e.g. 'A3' -> [0, 2]
+  def translate_coordinates(coordinates)
+    coordinates_ary = coordinates.split("")
+    # Convert row letter into index
+    letter = coordinates_ary[0]
+    coordinates_ary[0] = @@ROW_HASH[letter]
+    column_index = coordinates_ary[0]
+    row_index = coordinates_ary[1].to_i - 1 # -1 because indices start at 0
+    return [row_index, column_index]
+  end
+
+
 end
 
 # This class represents the cells on the gameboard.
 class Cell
-  attr_reader :side
+  attr_accessor :side
 
   def initialize
     @side = nil
-  end
+  end 
 
   # This class takes in a Player's side as a parameter,
   # and sets the cell to that player's side.
-  def set_side(player)
-    if @side.nil?
-      @side = player.side
-    else
-      puts "Cell is already an #{@side}!"
-    end
+  def take_side(player)
+    @side = player.side
   end
 
   def to_s
-    @side unless @side.nil?
-    return "_"
+    if @side.nil?
+      "_"
+    else
+      @side
+    end
   end
 
   def inspect
-    "Cell: " + to_s
+    "Cell" + to_s
   end
 end
 
@@ -80,10 +110,28 @@ class Player
     @side = side
   end
 
-  # Return the coordinates the player wishes to play on.
-  # def play(coordinates); end
+  # Take in the user-specified coordinates and return an array containing
+  # the self reference and player coordinates. Takes in coordinates from
+  # string form: ROW-LETTER + COLUMN-NUMBER
+  def play(coordinates)
+    to_play = [self, coordinates]
+  end
 
+  def inspect
+    "Player: #{@side}"
+  end
+
+  def to_s
+    "Player #{@side}"
+  end
 end
 
-new_game = Game.new
-puts new_game
+game = Game.new
+puts game
+player1 = game.player1
+player2 = game.player2
+
+game.make_moves(player1.play("A1"))
+game.make_moves(player2.play("C3"))
+puts game
+
