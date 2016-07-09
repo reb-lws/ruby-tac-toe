@@ -63,40 +63,38 @@ class Game
     # Convert row letter into index
     letter = coordinates_ary[0]
     coordinates_ary[0] = @@ROW_HASH[letter]
-    column_index = coordinates_ary[0]
-    row_index = coordinates_ary[1].to_i - 1 # -1 because indices start at 0
+    row_index = coordinates_ary[0]
+    column_index = coordinates_ary[1].to_i - 1 # -1 because indices start at 0
     return @board[row_index][column_index]
   end
 
   def row_victory?
     @board.each do |row|
-      if row.include?(nil)
-        next
-      elsif row.uniq.size == 1
-        true
-      end
+      sides_ary = row.collect { |cell| cell.side }
+      next if sides_ary.include?(nil)
+      return true if sides_ary.uniq.size <= 1
     end
 
     false
   end
 
-  #
   def column_victory?
     # Each loop checks a column
     3.times do |index|
-      column_to_inspect = []
+      sides_to_inspect = []
+      # sides_to_inspect collects by the column
       @board.each do |row|
-        column_to_inspect << row[index] 
+        sides_to_inspect << row[index].side
       end
       
-      if column_to_inspect.include?(nil)
+      if sides_to_inspect.include?(nil)
         next
-      elsif column_to_inspect.uniq.size == 1
-        true
+      elsif sides_to_inspect.uniq.size <= 1
+        return true
       end
     end
 
-    false
+    return false
   end
 
 
