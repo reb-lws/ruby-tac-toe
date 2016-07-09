@@ -12,3 +12,5 @@ game.make_moves(player1.play("A1"))
 game.make_moves(player2.play("C3"))
 game.display_board
 
+game.make_moves(player2.play("A1"))
+p game.victory?

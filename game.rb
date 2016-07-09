@@ -30,12 +30,14 @@ class Game
   def make_moves(play_ary)
     moving_player = play_ary[0]
     coordinates_string = play_ary[1]
-    coordinates = translate_coordinates(coordinates_string)
-    row = coordinates[0]
-    column = coordinates[1]
-    puts "#{moving_player} takes #{coordinates_string[0] + coordinates_string[1]}."
-    
-    modify_board!(column, row, moving_player)
+    cell_to_change = translate_coordinates(coordinates_string)
+    cell_to_change.take_side(moving_player)
+    puts "#{moving_player} moves to #{coordinates_string[0] + coordinates_string[1]}."
+  end
+
+  # Returns true if there is a winner on the board. False if no one has won yet.
+  def victory?
+    return row_victory? || diagonal_victory? || column_victory?
   end
 
 
@@ -54,10 +56,6 @@ class Game
     board_ary
   end
 
-  def modify_board!(column, row, player)
-    @board[column][row].side = player.side
-  end
-
   # Translates coordinates into a specific Cell reference.
   # ROW-LETTER + COLUMN-NUM -> [row_index, col_index]; e.g. 'A3' -> [0, 2]
   def translate_coordinates(coordinates)
@@ -67,7 +65,59 @@ class Game
     coordinates_ary[0] = @@ROW_HASH[letter]
     column_index = coordinates_ary[0]
     row_index = coordinates_ary[1].to_i - 1 # -1 because indices start at 0
-    return [row_index, column_index]
+    return @board[row_index][column_index]
+  end
+
+  def row_victory?
+    @board.each do |row|
+      if row.include?(nil)
+        next
+      elsif row.uniq.size == 1
+        true
+      end
+    end
+
+    false
+  end
+
+  #
+  def column_victory?
+    # Each loop checks a column
+    3.times do |index|
+      column_to_inspect = []
+      @board.each do |row|
+        column_to_inspect << row[index] 
+      end
+      
+      if column_to_inspect.include?(nil)
+        next
+      elsif column_to_inspect.uniq.size == 1
+        true
+      end
+    end
+
+    false
+  end
+
+
+  def diagonal_victory?
+    winning_side = translate_coordinates("B2").side
+    unless winning_side.nil?
+      a1 = translate_coordinates("A1")
+      c3 = translate_coordinates("C3")
+      a3 = translate_coordinates("A3")
+      c1 = translate_coordinates("C1")
+
+      if winning_side == a1.side && a1.side == c3.side
+        true
+      elsif winning_side == a3.side && a3.side == c1.side
+        true
+      else
+        false
+      end
+    else
+      false
+    end
   end
 
 

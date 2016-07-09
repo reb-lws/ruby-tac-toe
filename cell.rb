@@ -9,7 +9,11 @@ class Cell
   # This class takes in a Player's side as a parameter,
   # and sets the cell to that player's side.
   def take_side(player)
-    @side = player.side
+    if @side.nil?
+      @side = player.side
+    else
+      puts "Cell already occupied!"
+    end
   end
 
   def to_s
