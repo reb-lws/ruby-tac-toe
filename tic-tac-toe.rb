@@ -27,25 +27,33 @@ until game.victory? do
     puts "Invalid command! Specify the coordinates on the grid!" if !valid_input
   end
 
-  player_move = current_player.play(player_input)
-  game.make_moves(player_move)
+  occupied = game.cell_occupied?(player_input)
+  # Only trigger moves if cell isn't occupied
+  unless occupied
+    player_move = current_player.play(player_input)
+    game.make_moves(player_move)
 
-  # End-state messages
-  if game.victory?
-    game.display_board
-    puts "Congratulations! #{current_player} wins!" 
-  end
+    # End-state messages
+    if game.victory?
+      game.display_board
+      puts "Congratulations! #{current_player} wins!" 
+    end
 
-  if game.draw?
-    game.display_board
-    puts "...Draw! Thanks for playing!"
-    Kernel.exit(true)
-  end
+    if game.draw?
+      game.display_board
+      puts "...Draw! Thanks for playing!"
+      Kernel.exit(true)
+    end
 
-  # Switch the players after loop
-  if current_player.side == player1.side
-    current_player = player2
+    # Switch the players after loop
+    if current_player.side == player1.side
+      current_player = player2
+    else
+      current_player = player1
+    end
   else
-    current_player = player1
+    puts "#{player_input.upcase} already occupied! Try again"
   end
+
+
 end

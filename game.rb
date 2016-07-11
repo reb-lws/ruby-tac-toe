@@ -31,8 +31,9 @@ class Game
     moving_player = play_ary[0]
     coordinates_string = play_ary[1].upcase
     cell_to_change = translate_coordinates(coordinates_string)
+    return false if cell_to_change.occupied?
     cell_to_change.take_side(moving_player)
-    puts "#{moving_player} takes #{coordinates_string[0] + coordinates_string[1]}."
+    puts "Moving to #{coordinates_string[0] + coordinates_string[1]}."
   end
 
   # Returns true if there is a winner on the board. False if no one has won yet.
@@ -46,8 +47,13 @@ class Game
     return flattened_board.none? { |cell| cell.side == nil }
   end
 
+  def cell_occupied?(coordinates)
+    translate_coordinates(coordinates).occupied?
+  end
+
   ############################
   # Private methods start here 
+  ############################
   private
   # Creates the initial gameboard.
   def create_board
