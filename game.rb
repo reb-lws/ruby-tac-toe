@@ -14,7 +14,7 @@ class Game
     row1 = @board[0]
     row2 = @board[1]
     row3 = @board[2]
-    puts "   1   2    3"
+    puts "    1   2   3"
     puts "A  " + " #{row1[0]} # #{row1[1]} # #{row1[2]}  "
     puts "   ###########"
     puts "B  " + " #{row2[0]} # #{row2[1]} # #{row2[2]}  "
@@ -29,10 +29,10 @@ class Game
   # Update the gameboard according to the specifications provided by play_ary.
   def make_moves(play_ary)
     moving_player = play_ary[0]
-    coordinates_string = play_ary[1]
+    coordinates_string = play_ary[1].upcase
     cell_to_change = translate_coordinates(coordinates_string)
     cell_to_change.take_side(moving_player)
-    puts "#{moving_player} moves to #{coordinates_string[0] + coordinates_string[1]}."
+    puts "#{moving_player} takes #{coordinates_string[0] + coordinates_string[1]}."
   end
 
   # Returns true if there is a winner on the board. False if no one has won yet.
@@ -43,9 +43,11 @@ class Game
   # Returns true if there is a draw on the board.
   def draw?
     flattened_board = @board.flatten
-    flattened_board.include?(nil) ? false : true
+    return flattened_board.none? { |cell| cell.side == nil }
   end
 
+  ############################
+  # Private methods start here 
   private
   # Creates the initial gameboard.
   def create_board

@@ -7,20 +7,45 @@ game = Game.new
 player1 = game.player1
 player2 = game.player2
 
+current_player = player1
 
+until game.victory? do
+  game.display_board 
+  valid_input = false
 
+  # Ensure valid input
+  until valid_input do
+    print "#{current_player} to move >> "
+    player_input = gets.chomp
+    
+    if player_input == "exit" || player_input == "q" 
+      puts "Leaving game...!"
+      Kernel.exit(true)
+    end
 
-=begin lame debugging
-game = Game.new
-game.display_board
-player1 = game.player1
-player2 = game.player2
+    valid_input = Player.verify_input(player_input)
+    puts "Invalid command! Specify the coordinates on the grid!" if !valid_input
+  end
 
-game.make_moves(player1.play("A3"))
-game.make_moves(player1.play("B2"))
-game.make_moves(player1.play("C1"))
+  player_move = current_player.play(player_input)
+  game.make_moves(player_move)
 
-p game.victory?
+  # End-state messages
+  if game.victory?
+    game.display_board
+    puts "Congratulations! #{current_player} wins!" 
+  end
 
-game.display_board
-=end
+  if game.draw?
+    game.display_board
+    puts "...Draw! Thanks for playing!"
+    Kernel.exit(true)
+  end
+
+  # Switch the players after loop
+  if current_player.side == player1.side
+    current_player = player2
+  else
+    current_player = player1
+  end
+end
