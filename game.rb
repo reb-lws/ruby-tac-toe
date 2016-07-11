@@ -40,6 +40,11 @@ class Game
     return row_victory? || diagonal_victory? || column_victory?
   end
 
+  # Returns true if there is a draw on the board.
+  def draw?
+    flattened_board = @board.flatten
+    flattened_board.include?(nil) ? false : true
+  end
 
   private
   # Creates the initial gameboard.
@@ -61,7 +66,7 @@ class Game
   def translate_coordinates(coordinates)
     coordinates_ary = coordinates.split("")
     # Convert row letter into index
-    letter = coordinates_ary[0]
+    letter = coordinates_ary[0].upcase
     coordinates_ary[0] = @@ROW_HASH[letter]
     row_index = coordinates_ary[0]
     column_index = coordinates_ary[1].to_i - 1 # -1 because indices start at 0
@@ -75,7 +80,7 @@ class Game
       return true if sides_ary.uniq.size <= 1
     end
 
-    false
+    return false
   end
 
   def column_victory?
@@ -117,6 +122,7 @@ class Game
       false
     end
   end
+
 
 
 end

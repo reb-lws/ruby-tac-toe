@@ -13,8 +13,22 @@ class Player
     to_play = [self, coordinates]
   end
 
+  def self.verify_input(s)
+    return false if s.size != 2
+    split = s.split("")
+
+    acceptable_row_letter = ["A", "B", "C", "a", "b", "c"].include?(split.first)
+    acceptable_col_num = [1, 2, 3].include?(split.last.to_i)
+
+    if !acceptable_row_letter || !acceptable_col_num
+      false
+    else
+      true
+    end
+  end
+
   def inspect
-    "Player: #{@side}"
+    "Player #{@side}"
   end
 
   def to_s
